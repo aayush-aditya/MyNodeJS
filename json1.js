@@ -24,7 +24,9 @@ fss.forEach(function(d){
       if( (flag == 0) && (val[0] == "Agricultural") && (val[1] == "Production") && (val[2] == "Oilseeds") ){
 
         flag = 1;
-        var residue = row[0].replace("Agricultural Production", "");
+        var residue = row[0].replace("Agricultural Production Oilseeds", "");
+        if(residue =="")
+        {residue = "Oilseeds";}
         var tmp = {};
         tmp["OilseedType"]=residue;
         tmp["Value"]= row[(row.length)-2];
@@ -34,7 +36,9 @@ fss.forEach(function(d){
     }
   }
 });
-var outPath = path.join(__dirname, 'PATH_TO_JSON_OILSEEDS1');
+var outPath = path.join(__dirname, 'PATH_TO_JSON_OILSEEDS.json');
+
+json.sort(function(a,b) {return b.Value - a.Value});
 // Convert object to string, write json to file
 fs.writeFileSync(outPath, JSON.stringify(json), 'utf8',
 function(err){console.log(err);});

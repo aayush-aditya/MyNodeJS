@@ -37,14 +37,14 @@ fss.forEach(function(d){
 
   }
 });
-for(var j = 3; j < header.length; j++){
+for(var j = 15; j < header.length; j++){
   var tmp = {};
   tmp["year"]=header[j].replace(" 3-","");
   tmp["Value"]= sum[j];
   // Add object to list
   json.push(tmp);
 }
-var outPath = path.join(__dirname, 'PATH_TO_JSON_Commercial_Crops1');
+var outPath = path.join(__dirname, 'PATH_TO_JSON_Commercial_Crops.json');
 // Convert object to string, write json to file
 fs.writeFileSync(outPath, JSON.stringify(json), 'utf8',
 function(err){console.log(err);});
