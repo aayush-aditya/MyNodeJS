@@ -15,7 +15,7 @@ fss = f.split('\r\n');
 
 fss.forEach(function(d){
 
-// splitting of each row on basis of commas(,) and patterns like(",")
+  // splitting of each row on basis of commas(,) and patterns like(",")
   row = d.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
   for(var i = 0; i<(row.length); i++){
     flag = 0;

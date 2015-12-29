@@ -4,10 +4,35 @@
     <meta charset="utf-8">
 
     <style>
-
-    body {
-      font: 12px sans-serif;
+    h1{
+      text-align: center;
+      color: #00004d;
+      font-style: italic;
+      margin: 0;
+      padding-top: 10px;
     }
+    body:before, body:after {
+        content: "";
+        position: fixed;
+        background: #900;
+        left: 0;
+        right: 0;
+        height: 10px;
+    }
+    body:before {
+        top: 0;
+    }
+    body:after {
+        bottom: 0;
+    }
+
+      body {
+        font: 12px sans-serif;
+        font-weight: bold;
+        border-left: 10px solid #900;
+        border-right: 10px solid #900;
+        margin: 0;
+      }
 
     .axis path,
     .axis line {
@@ -17,7 +42,7 @@
     }
 
     .bar {
-      fill: black;
+      fill: skyblue;
     }
 
     .bar:hover {
@@ -59,13 +84,14 @@
     </style>
   </head>
   <body>
+    <h1><u>"GRAPH REPRESENTING FOODGRAINS PRODUCTION IN YEAR 2013"</u></h1>
       <script src="d3.min.js"></script>
       <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
       <script>
 
       var margin = {top: 40, right: 20, bottom: 120, left: 40},
           width = 1300 - margin.left - margin.right,
-          height = 600 - margin.top - margin.bottom;
+          height = 605 - margin.top - margin.bottom;
 
       var formatPercent = d3.format(".0%");
 
@@ -77,8 +103,8 @@
 
       var xAxis = d3.svg.axis()
           .scale(x)
-          .tickSize(0)
-          .tickPadding(6)
+          .tickSize(5)
+          .tickPadding(0)
           .orient("bottom");
 
       var yAxis = d3.svg.axis()
@@ -118,7 +144,7 @@
             .call(yAxis)
           .append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 6)
+            .attr("y", 4)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text("Croptype Production");

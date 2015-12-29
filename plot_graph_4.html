@@ -1,133 +1,162 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <style>
+  <meta charset="utf-8">
+  <style>
+  h1{
+    text-align: center;
+    color: #00004d;
+    font-style: italic;
+    margin: 0;
+    padding-top: 10px;
+    font-size: 28px;
+  }
+  body:before, body:after {
+    content: "";
+    position: fixed;
+    background: #900;
+    left: 0;
+    right: 0;
+    height: 10px;
+  }
+  body:before {
+    top: 0;
+  }
+  body:after {
+    bottom: 0;
+  }
 
-body {
-  font: 10px sans-serif;
-}
+  body {
+    font: 14px sans-serif
+    border-left: 10px solid #900;
+    border-right: 10px solid #900;
+    margin: 0;
+  }
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
 
-.bar {
-  fill: steelblue;
-}
+  .bar {
+    fill: steelblue;
+  }
 
-.x.axis path {
-  display: block;
-}
-text
-{
-  font-size: 12px;
-}
+  .x.axis path {
+    display: block;
+  }
+  text
+  {
+    font-size: 14px;
+    font-weight: bold;
+  }
 
-</style>
-  </head>
-  <body>
-      <script src="d3.min.js"></script>
-      <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-<script>
+  </style>
+</head>
+<body>
+  <h1><u>"STACKED GRAPH REPRESENTING PER YEAR RICE PRODUCTION IN 4 SOUTHERN STATES"</u></h1>
+  <script src="d3.min.js"></script>
+  <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  <script>
 
-var margin = {top: 40, right: 20, bottom: 80, left: 60},
-    width = 1300 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+  var margin = {top: 40, right: 20, bottom: 80, left: 60},
+  width = 1300 - margin.left - margin.right,
+  height = 605 - margin.top - margin.bottom;
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+  var x = d3.scale.ordinal()
+  .rangeRoundBands([0, width], .6);
 
-var y = d3.scale.linear()
-    .rangeRound([height, 0]);
+  var y = d3.scale.linear()
+  .rangeRound([height, 0]);
 
-var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+  var color = d3.scale.ordinal()
+  .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+  var xAxis = d3.svg.axis()
+  .scale(x)
+  .tickSize(5)
+  .tickPadding(0)
+  .orient("bottom");
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(d3.format(".2s"));
+  var yAxis = d3.svg.axis()
+  .scale(y)
+  .orient("left")
+  .tickFormat(d3.format(".2s"));
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+  var svg = d3.select("body").append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("PATH_TO_JSON_STATES.json", function(error, data) {
-  if (error) throw error;
-  console.log(data[0]);
-  color.domain(["Karnataka","Kerala","Andhra Pradesh","Tamil Nadu"]);
+  d3.json("PATH_TO_JSON_STATES.json", function(error, data) {
+    if (error) throw error;
+    console.log(data[0]);
+    color.domain(["Karnataka","Kerala","Andhra Pradesh","Tamil Nadu"]);
 
-  data.forEach(function(d) {
-    var y0 = 0;
-    d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d["state"][name]}; });
-    d.total = d.ages[d.ages.length - 1].y1;
+    data.forEach(function(d) {
+      var y0 = 0;
+      d.ages = color.domain().map(function(name) { return {name: name, y0: y0, y1: y0 += +d["state"][name]}; });
+      d.total = d.ages[d.ages.length - 1].y1;
+    });
+
+    // data.sort(function(a, b) { return b.total - a.total; });
+
+    x.domain(data.map(function(d) { return d["year"]; }));
+    y.domain([0, d3.max(data, function(d) { return d.total; })]);
+
+    svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+    svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -44)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("Rice Production");
+
+    var country = svg.selectAll(".country")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "g")
+    .attr("transform", function(d) { return "translate(" + x(d["year"]) + ",0)"; });
+
+    country.selectAll("rect")
+    .data(function(d) { return d.ages; })
+    .enter().append("rect")
+    .attr("width", x.rangeBand())
+    .attr("y", function(d) { return y(d.y1); })
+    .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+    .style("fill", function(d) { return color(d.name); });
+
+    var legend = svg.selectAll(".legend")
+    .data(color.domain().slice().reverse())
+    .enter().append("g")
+    .attr("class", "legend")
+    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", color);
+
+    legend.append("text")
+    .attr("x", width - 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function(d) { return d; });
+
   });
 
-  // data.sort(function(a, b) { return b.total - a.total; });
-
-  x.domain(data.map(function(d) { return d["year"]; }));
-  y.domain([0, d3.max(data, function(d) { return d.total; })]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -39)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Rice Production");
-
-  var country = svg.selectAll(".country")
-      .data(data)
-    .enter().append("g")
-      .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x(d["year"]) + ",0)"; });
-
-  country.selectAll("rect")
-      .data(function(d) { return d.ages; })
-    .enter().append("rect")
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.y1); })
-      .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-      .style("fill", function(d) { return color(d.name); });
-
-  var legend = svg.selectAll(".legend")
-      .data(color.domain().slice().reverse())
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-  legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
-
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
-
-});
-
-</script>
+  </script>
 </body>
 </html>

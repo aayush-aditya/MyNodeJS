@@ -21,23 +21,26 @@ for(var i=3;i<header.length;i++)
   {
     for(var j=1;j<fss.length;j++)
     {
-        if((fss[j].search(arrState[z])) !== -1 && (fss[j].search("Rice")) !== -1 && (fss[j].search("Yield")) !== -1)
+      if((fss[j].search(arrState[z])) !== -1 && (fss[j].search("Rice")) !== -1 && (fss[j].search("Yield")) !== -1)
+      {
+        // splitting of each row on basis of commas(,) and patterns like(",")
+        row = fss[j].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        //console.log(row);
+        if (row[2] == "kg/ha")
         {
-          // splitting of each row on basis of commas(,) and patterns like(",")
-          row = fss[j].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-          //console.log(row);
-          if (row[2] == "kg/ha")
-          {
-             tmp1[arrState[z]]=(row[i]=='NA')?0:parseInt(row[i]);
-          }
+          tmp1[arrState[z]]=(row[i]=='NA')?0:parseInt(row[i]);
+          //console.log(tmp1);
         }
+      }
     }
   }
   tmp["year"]=header[i].replace(" 3-","");
   tmp["state"]=tmp1;
-  json.push(tmp);
-  }
-  fs.writeFile('PATH_TO_JSON_STATES.json', JSON.stringify(json) , function (err)
-  {
+  // to remove the zero values
+  if((tmp["state"]["Karnataka"]!=0)&&(tmp["state"]["Kerala"]!=0)&&(tmp["state"]["Andhra Pradesh"]!=0)&&(tmp["state"]["Tamil Nadu"]!=0))
+  {json.push(tmp);}
+}
+fs.writeFile('PATH_TO_JSON_STATES.json', JSON.stringify(json) , function (err)
+{
   if (err) return console.log(err);
 });
